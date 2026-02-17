@@ -5,72 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIGA DO VALE - Sua cidade em um só lugar</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f3f4f6; }
         .slide-in { animation: slideIn 0.3s ease-in; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .accordion-content.open { max-height: 3000px; }
         .loading { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; }
         .loading.show { display: flex; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #16a34a; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: center; justify-content: center; padding: 20px; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; border-radius: 10px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 30px; }
     </style>
 </head>
 <body>
     <div id="app"></div>
     <div id="loading" class="loading"><div class="spinner"></div></div>
 
-    <!-- MODAL TERMOS -->
-    <div id="termsModal" class="modal">
-        <div class="modal-content slide-in">
-            <h1 style="color:#16a34a;font-size:26px;margin-bottom:20px;font-weight:bold;">⚖️ TERMOS DE USO E POLÍTICA DE PRIVACIDADE</h1>
-            <h2 style="color:#333;font-size:18px;margin-bottom:20px;">LIGA DO VALE</h2>
-            <div style="background:#fef3c7;padding:15px;border-left:4px solid #f59e0b;margin:20px 0;border-radius:5px;">
-                <strong>⚠️ IMPORTANTE:</strong> Ao utilizar a LIGA DO VALE, você concorda com as seguintes regras:
-            </div>
-            <h2 style="color:#333;font-size:18px;margin-top:25px;margin-bottom:12px;">1. O QUE NÓS FAZEMOS</h2>
-            <p style="color:#444;margin-bottom:12px;line-height:1.8;">A LIGA DO VALE é uma plataforma de conexão hiperlocal. Facilitamos o acesso a informações (empregos, eventos, ofertas) e o contato entre pessoas. <strong>Não somos responsáveis pelas negociações, qualidade dos serviços ou veracidade dos anúncios postados por usuários.</strong></p>
-            <h2 style="color:#333;font-size:18px;margin-top:25px;margin-bottom:12px;">2. SEUS DADOS E PRIVACIDADE</h2>
-            <p style="color:#444;margin-bottom:12px;line-height:1.8;">Coletamos seu <strong>Nome</strong> e <strong>Número de WhatsApp</strong>. Ao postar anúncio, seu nome e telefone ficarão visíveis. <strong>Não vendemos seus dados.</strong></p>
-            <h2 style="color:#333;font-size:18px;margin-top:25px;margin-bottom:12px;">3. REGRAS DE CONDUTA</h2>
-            <p style="color:#444;margin-bottom:8px;">É proibido postar:</p>
-            <ul style="margin-left:25px;margin-bottom:15px;line-height:1.8;color:#444;">
-                <li>Conteúdo ilegal, ofensivo ou pornográfico</li>
-                <li>Anúncios falsos ou golpes</li>
-                <li>Assédio a outros usuários</li>
-            </ul>
-            <div style="background:#fef3c7;padding:15px;border-left:4px solid #f59e0b;margin:20px 0;border-radius:5px;">
-                <strong>⚠️ PUNIÇÃO:</strong> Banimento imediato sem reembolso.
-            </div>
-            <h2 style="color:#333;font-size:18px;margin-top:25px;margin-bottom:12px;">4. PAGAMENTOS</h2>
-            <ul style="margin-left:25px;margin-bottom:15px;line-height:1.8;color:#444;">
-                <li>Teste gratuito até <strong>1º de abril de 2026</strong></li>
-                <li>Plano Semanal: <strong>R$ 1,99/semana</strong></li>
-                <li>Plano Mensal: <strong>R$ 4,99/mês</strong></li>
-            </ul>
-            <h2 style="color:#333;font-size:18px;margin-top:25px;margin-bottom:12px;">5. TRANSAÇÕES ENTRE USUÁRIOS</h2>
-            <p style="color:#444;margin-bottom:12px;line-height:1.8;">A LIGA DO VALE <strong>não processa pagamentos</strong> de produtos vendidos entre usuários.</p>
-            <div style="background:#fef3c7;padding:15px;border-left:4px solid #f59e0b;margin:20px 0;border-radius:5px;">
-                <strong>💡 DICA:</strong> Nunca pague adiantado por algo que não viu pessoalmente.
-            </div>
-            <hr style="margin:30px 0;border:none;border-top:1px solid #ddd;">
-            <p style="font-size:13px;color:#666;text-align:center;margin-bottom:20px;">
-                <strong>LIGA DO VALE</strong> - Última atualização: 16 de fevereiro de 2026
-            </p>
-            <center>
-                <button onclick="closeTermsModal()" style="background:#16a34a;color:white;padding:12px 25px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;">✅ ENTENDI E ACEITO</button>
-            </center>
-        </div>
-    </div>
-
-    <!-- SUPABASE CDN - CARREGA PRIMEIRO -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-
     <script>
-        // URL CORRIGIDA - vgcbyctitiojxzesmkvg (com o "i" que estava faltando)
+        // ==================== SUPABASE - URL CORRIGIDA ====================
         const SUPABASE_URL = 'https://vgcbyctitiojxzesmkvg.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnY2J5Y3RpdGlvanh6ZXNta3ZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNjQxMTgsImV4cCI6MjA4Njg0MDExOH0.ApLKumhJHL6KTjpvzzXMx2FSG2wGZuyA67yO-jTH-yk';
 
@@ -79,7 +33,6 @@
         function initSupabase() {
             try {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                console.log('✅ Supabase conectado!');
                 return true;
             } catch(e) {
                 console.error('Erro Supabase:', e);
@@ -87,20 +40,91 @@
             }
         }
 
+        // ==================== ESTADO GLOBAL ====================
         let currentPage = 'login';
+        let selectedCity = 'JUAZEIRO';
+        let userName = '';
+        let userPhone = '';
         let currentUser = null;
+        let isPhoneVerified = false;
+        let verificationCode = '';
+        let verificationAttempts = 3;
+        let isSubscribed = false;
+        let paquerapIndex = 0;
+        let userMatches = [];
+        let openAccordion = null;
+        let showPaymentModal = false;
+        let paymentAmount = 0;
+        let paymentType = '';
+        let showTerms = false;
+        let tempUserId = null;
 
-        function openTermsModal() { document.getElementById('termsModal').classList.add('show'); }
-        function closeTermsModal() {
-            document.getElementById('termsModal').classList.remove('show');
-            const cb = document.getElementById('termsCheckbox');
-            if (cb) cb.checked = true;
-        }
+        const cities = ['JUAZEIRO', 'PETROLINA'];
 
+        // ==================== DADOS MOCK ====================
+        const mockEmpregos = {
+            'JUAZEIRO': [
+                { id: 1, titulo: 'Repositor (Atacadão)', salario: 'R$ 1.400 + VT', telefone: '74999991234' },
+                { id: 2, titulo: 'Vendedor (Loja)', salario: 'Comissão', telefone: '74999995678' },
+                { id: 3, titulo: 'Operador Caixa', salario: 'R$ 1.200', telefone: '74999997890' },
+            ],
+            'PETROLINA': [
+                { id: 4, titulo: 'Pintor', salario: 'R$ 150/dia', telefone: '87999991111' },
+                { id: 5, titulo: 'Eletricista', salario: 'R$ 80/hora', telefone: '87999992222' },
+            ]
+        };
+
+        const mockOfertas = {
+            'JUAZEIRO': [
+                { id: 1, produto: 'LEITE (1L)', precoNormal: 5.50, precoPromo: 3.90, mercado: 'Atacadão Centro', desconto: 29 },
+                { id: 2, produto: 'ARROZ (5kg)', precoNormal: 28.00, precoPromo: 19.90, mercado: 'Assaí', desconto: 29 },
+            ],
+            'PETROLINA': [
+                { id: 3, produto: 'FEIJÃO (1kg)', precoNormal: 8.50, precoPromo: 5.90, mercado: 'Atacadão', desconto: 31 },
+            ]
+        };
+
+        const mockFestas = {
+            'JUAZEIRO': [
+                { id: 1, nome: 'FESTA DO FORRÓ', data: '31/01', hora: '21:00', local: 'Bar do Seu Zé', entrada: 'R$ 20' },
+                { id: 2, nome: 'SHOW WESLEY', data: '03/02', hora: '22:00', local: 'Ginásio', entrada: 'R$ 80' },
+            ],
+            'PETROLINA': [
+                { id: 3, nome: 'FESTA COMUNITÁRIA', data: '02/02', hora: '19:00', local: 'Praça', entrada: 'Livre' },
+            ]
+        };
+
+        const mockServicos = {
+            'JUAZEIRO': [
+                { id: 1, nome: 'João Silva', profissao: 'Encanador', telefone: '74999991234', experiencia: 15 },
+                { id: 2, nome: 'Carlos', profissao: 'Eletricista', telefone: '74999992222', experiencia: 10 },
+            ],
+            'PETROLINA': [
+                { id: 3, nome: 'Alessandra', profissao: 'Cabeleireira', telefone: '87999991111', experiencia: 5 },
+            ]
+        };
+
+        const mockNoticias = {
+            'JUAZEIRO': [
+                { id: 1, titulo: 'Acidente na Av. Central', descricao: 'Dois carros colidem', fonte: 'Facebook', horario: 'há 30min' },
+                { id: 2, titulo: 'Falta d\'água amanhã', descricao: '08:00-18:00 na região central', fonte: 'Prefeitura (Oficial)', horario: 'há 2h' },
+            ],
+            'PETROLINA': [
+                { id: 3, titulo: 'Dengue em alta', descricao: '5 novos casos confirmados', fonte: 'Secretaria de Saúde', horario: 'há 1h' },
+            ]
+        };
+
+        const paqueraProfiles = [
+            { id: 1, nome: 'Maria', idade: 24, cidade: 'JUAZEIRO', bio: 'Amo forró 🎵', avatar: '👩‍🦱' },
+            { id: 2, nome: 'Ana', idade: 22, cidade: 'JUAZEIRO', bio: 'Aventureira', avatar: '👩‍🦰' },
+            { id: 3, nome: 'Carla', idade: 26, cidade: 'PETROLINA', bio: 'Sertaneja', avatar: '👩' },
+            { id: 4, nome: 'Jessica', idade: 23, cidade: 'PETROLINA', bio: 'Amo dançar', avatar: '👩‍🦱' },
+            { id: 5, nome: 'Bruna', idade: 25, cidade: 'JUAZEIRO', bio: 'Tranquila', avatar: '👩‍🦰' },
+        ];
+
+        // ==================== UTILITÁRIAS ====================
         function sanitizeInput(input) {
-            const div = document.createElement('div');
-            div.textContent = input;
-            return div.innerHTML.trim().substring(0, 100);
+            return String(input).replace(/[<>{}]/g, '').trim().substring(0, 100);
         }
 
         function validatePhone(phone) {
@@ -108,248 +132,438 @@
             return cleaned.length >= 10 && cleaned.length <= 11;
         }
 
+        function openWhatsAppLink(phone, message) {
+            const cleanPhone = phone.replace(/\D/g, '');
+            window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
         function showLoading() { document.getElementById('loading').classList.add('show'); }
         function hideLoading() { document.getElementById('loading').classList.remove('show'); }
 
+        // ==================== LOGIN ====================
         async function handleLogin() {
-            if (!initSupabase()) {
-                alert('❌ Erro ao conectar. Recarregue a página!');
-                return;
-            }
-
-            const name = document.getElementById('nameInput')?.value?.trim();
-            const phone = document.getElementById('phoneInput')?.value?.trim();
+            const name = document.getElementById('nameInput').value;
+            const phone = document.getElementById('phoneInput').value;
             const termsChecked = document.getElementById('termsCheckbox')?.checked;
 
-            if (!name || name.length < 2) { alert('❌ Digite seu nome!'); return; }
-            if (!phone) { alert('❌ Digite seu telefone!'); return; }
+            if (!name || !phone) { alert('❌ Preencha nome e telefone!'); return; }
             if (!termsChecked) { alert('❌ Aceite os Termos de Uso!'); return; }
-            if (!validatePhone(phone)) { alert('❌ Telefone inválido! Use formato: 74999999999'); return; }
+            if (!validatePhone(phone)) { alert('❌ Telefone inválido! Use: 74999999999'); return; }
+            if (!initSupabase()) { alert('❌ Erro de conexão. Recarregue!'); return; }
 
             showLoading();
-
             try {
                 const cleanPhone = phone.replace(/\D/g, '');
-
-                const { data: existingUser, error: searchError } = await supabaseClient
-                    .from('users')
-                    .select('id, nome, cidade')
-                    .eq('telefone', cleanPhone)
-                    .maybeSingle();
-
+                const { data: existingUser } = await supabaseClient.from('users').select('id').eq('telefone', cleanPhone).maybeSingle();
                 let userId;
 
                 if (existingUser) {
                     userId = existingUser.id;
                 } else {
-                    const { data: newUser, error: insertError } = await supabaseClient
-                        .from('users')
-                        .insert([{
-                            nome: sanitizeInput(name),
-                            telefone: cleanPhone,
-                            cidade: 'JUAZEIRO',
-                            termos_aceitos: true,
-                            data_aceite_termos: new Date().toISOString(),
-                            assinatura_ativa: false,
-                            data_expiracao: '2026-04-01T23:59:59.000Z'
-                        }])
-                        .select('id')
-                        .single();
-
-                    if (insertError) {
-                        console.error('Erro insert:', insertError);
-                        throw new Error('Erro ao cadastrar: ' + insertError.message);
-                    }
+                    const { data: newUser, error } = await supabaseClient.from('users').insert([{
+                        nome: sanitizeInput(name), telefone: cleanPhone, cidade: selectedCity,
+                        termos_aceitos: true, data_aceite_termos: new Date().toISOString(),
+                        assinatura_ativa: false, data_expiracao: '2026-04-01T23:59:59.000Z'
+                    }]).select('id').single();
+                    if (error) throw new Error(error.message);
                     userId = newUser.id;
                 }
 
-                const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+                const code = Math.floor(100000 + Math.random() * 900000).toString();
+                verificationCode = code;
+                await supabaseClient.from('verification_codes').insert([{
+                    user_id: userId, code: code,
+                    expires_at: new Date(Date.now() + 10 * 60000).toISOString(), used: false
+                }]);
 
-                const { error: codeError } = await supabaseClient
-                    .from('verification_codes')
-                    .insert([{
-                        user_id: userId,
-                        code: verificationCode,
-                        expires_at: new Date(Date.now() + 10 * 60000).toISOString(),
-                        used: false
-                    }]);
-
-                if (codeError) {
-                    console.error('Erro código:', codeError);
-                    throw new Error('Erro ao gerar código: ' + codeError.message);
-                }
-
-                const message = `🛡️ LIGA DO VALE\n\nOlá ${name}! Seu código de acesso:\n\n🔑 ${verificationCode}\n\nDigite no site para liberar.\n⚠️ Expira em 10 minutos.\n\nNão compartilhe!`;
-                window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
-
-                sessionStorage.setItem('tempUserId', userId);
-                sessionStorage.setItem('tempPhone', cleanPhone);
-                sessionStorage.setItem('tempName', name);
-
-                currentPage = 'verify';
-                render();
-
+                tempUserId = userId;
+                userName = sanitizeInput(name);
+                userPhone = phone;
+                isPhoneVerified = true;
             } catch (error) {
-                console.error('Erro completo:', error);
                 alert('❌ Erro: ' + error.message);
             } finally {
                 hideLoading();
+                render();
             }
+        }
+
+        function sendVerificationCode() {
+            openWhatsAppLink(userPhone, `🛡️ LIGA DO VALE\n\nOlá ${userName}!\n\nSeu código: 🔑 ${verificationCode}\n\nExpira em 10 minutos.`);
         }
 
         async function verifyCode() {
+            const inputCode = document.getElementById('codeInput').value;
+            if (!inputCode || inputCode.length !== 6) { alert('❌ Digite 6 dígitos!'); return; }
             if (!initSupabase()) { alert('❌ Erro de conexão!'); return; }
 
-            const inputCode = document.getElementById('codeInput')?.value?.trim();
-            const userId = sessionStorage.getItem('tempUserId');
-            const name = sessionStorage.getItem('tempName');
-            const phone = sessionStorage.getItem('tempPhone');
-
-            if (!inputCode || inputCode.length !== 6) { alert('❌ Digite os 6 dígitos!'); return; }
-
             showLoading();
-
             try {
-                const { data: codeData, error } = await supabaseClient
-                    .from('verification_codes')
-                    .select('*')
-                    .eq('user_id', userId)
-                    .eq('code', inputCode)
-                    .eq('used', false)
-                    .maybeSingle();
+                const { data: codeData } = await supabaseClient.from('verification_codes').select('*')
+                    .eq('user_id', tempUserId).eq('code', inputCode).eq('used', false).maybeSingle();
 
-                if (error || !codeData) { alert('❌ Código inválido!'); hideLoading(); return; }
+                if (!codeData) { alert('❌ Código inválido!'); hideLoading(); return; }
                 if (new Date(codeData.expires_at) < new Date()) { alert('❌ Código expirado!'); hideLoading(); return; }
 
                 await supabaseClient.from('verification_codes').update({ used: true }).eq('id', codeData.id);
-
-                const { data: userData } = await supabaseClient.from('users').select('*').eq('id', userId).single();
+                const { data: userData } = await supabaseClient.from('users').select('*').eq('id', tempUserId).single();
                 currentUser = userData;
-
-                sessionStorage.setItem('userId', userData.id);
-                sessionStorage.removeItem('tempUserId');
-                sessionStorage.removeItem('tempPhone');
-                sessionStorage.removeItem('tempName');
-
-                const welcomeMsg = `🎉 BEM-VINDO(A) À LIGA DO VALE! 🌵\n\nAgora você tem tudo na palma da mão:\n\n💼 Empregos novos todo dia\n🛒 Ofertas dos supermercados\n🔧 Encanadores e eletricistas\n🥳 Agenda de festas\n🏪 Compra e venda com foto\n💘 Paquera local\n\n🔗 Acesse: liga-do-vale.vercel.app\n\n💡 Adicione à tela inicial do celular!\n🎁 Teste grátis até 1º de abril de 2026!`;
-                setTimeout(() => window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(welcomeMsg)}`, '_blank'), 1500);
-
+                isPhoneVerified = false;
                 currentPage = 'home';
-                render();
 
+                setTimeout(() => openWhatsAppLink(userPhone, `🎉 BEM-VINDO(A) À LIGA DO VALE!\n\n💼 Empregos | 🛒 Ofertas | 🔧 Serviços\n🥳 Festas | 🏪 Compras e Vendas | 💘 Paquera\n\n🎁 Teste grátis até 1º de abril de 2026!`), 1500);
             } catch (error) {
-                console.error('Erro verificação:', error);
                 alert('❌ Erro: ' + error.message);
             } finally {
                 hideLoading();
+                render();
             }
         }
 
-        function renderLogin() {
-            return `
-            <div class="min-h-screen bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center p-4">
-                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
-                    <div class="text-center mb-8">
-                        <div class="text-6xl mb-4">🛡️</div>
-                        <h1 class="text-3xl font-black text-green-600 mb-2">LIGA DO VALE</h1>
-                        <p class="text-gray-600 text-sm">Sua cidade em um só lugar</p>
-                    </div>
-                    <div class="space-y-4">
-                        <input id="nameInput" type="text" placeholder="Seu nome completo" maxlength="50"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-green-600 focus:outline-none text-gray-800"/>
-                        <input id="phoneInput" type="tel" placeholder="74999999999 (só números)"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-green-600 focus:outline-none text-gray-800"
-                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
-                        <div class="flex items-start space-x-3 bg-yellow-50 p-3 rounded-lg border-2 border-yellow-200">
-                            <input id="termsCheckbox" type="checkbox" class="mt-1 w-5 h-5 cursor-pointer flex-shrink-0"/>
-                            <label class="text-xs text-gray-700 cursor-pointer" onclick="document.getElementById('termsCheckbox').click()">
-                                Li e concordo com os <a href="#" onclick="openTermsModal(); return false;" class="text-blue-600 underline font-bold">Termos de Uso</a> e entendo que meu WhatsApp será usado para contatos.
-                            </label>
-                        </div>
-                        <button onclick="handleLogin()"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-lg text-lg transition-colors">
-                            ENTRAR
-                        </button>
-                    </div>
-                    <p class="text-center text-sm mt-6 font-bold text-green-600">🎁 Teste GRÁTIS até 1º de abril de 2026!</p>
-                </div>
-            </div>`;
-        }
+        function resetLogin() { isPhoneVerified = false; userName = ''; verificationAttempts = 3; render(); }
 
-        function renderVerify() {
-            return `
-            <div class="min-h-screen bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center p-4">
-                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
-                    <div class="text-center mb-8">
-                        <div class="text-6xl mb-4">📱</div>
-                        <h2 class="text-2xl font-bold mb-2">Verificação WhatsApp</h2>
-                        <p class="text-gray-500 text-sm">Código enviado para seu WhatsApp</p>
-                        <p class="text-lg font-bold text-green-600 mt-1">${sessionStorage.getItem('tempPhone')}</p>
+        // ==================== RENDERS ====================
+        function renderLogin() {
+            if (!isPhoneVerified) {
+                return `
+                <div class="min-h-screen bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full slide-in">
+                        <div class="text-center mb-8">
+                            <div class="text-6xl mb-4">🛡️</div>
+                            <h1 class="text-3xl font-black text-green-600 mb-2">LIGA DO VALE</h1>
+                            <p class="text-gray-600">Sua cidade em um só lugar</p>
+                        </div>
+                        <div class="space-y-4">
+                            <input id="nameInput" type="text" placeholder="Seu nome completo" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600" maxlength="50">
+                            <input id="phoneInput" type="tel" placeholder="74999999999 (só números)" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            <div class="flex items-start space-x-2 bg-yellow-50 p-3 rounded-lg border-2 border-yellow-200">
+                                <input id="termsCheckbox" type="checkbox" class="mt-1 w-5 h-5 cursor-pointer flex-shrink-0">
+                                <label class="text-xs text-gray-700 cursor-pointer" onclick="document.getElementById('termsCheckbox').click()">
+                                    Li e concordo com os <a href="#" onclick="showTerms=true;render();return false;" class="text-blue-600 underline font-bold">Termos de Uso</a> e entendo que meu WhatsApp será usado para contatos.
+                                </label>
+                            </div>
+                            <button onclick="handleLogin()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">ENTRAR</button>
+                        </div>
+                        <p class="text-center text-sm mt-4 font-bold text-green-600">🎁 Teste GRÁTIS até 1º de abril de 2026!</p>
                     </div>
-                    <div class="space-y-4">
-                        <input id="codeInput" type="text" placeholder="000000" maxlength="6"
-                            class="w-full px-4 py-5 border-2 border-gray-200 rounded-lg text-center text-4xl font-black tracking-widest focus:border-green-600 focus:outline-none"
-                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
-                        <button onclick="verifyCode()"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-lg text-lg">
-                            ✅ VERIFICAR CÓDIGO
-                        </button>
-                        <button onclick="currentPage='login';render()"
-                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-lg text-sm">
-                            🔄 Voltar e tentar novamente
-                        </button>
+                </div>`;
+            } else {
+                return `
+                <div class="min-h-screen bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full slide-in">
+                        <div class="text-center mb-8">
+                            <div class="text-6xl mb-4">📱</div>
+                            <h2 class="text-2xl font-bold mb-2">Verificação WhatsApp</h2>
+                            <p class="text-gray-600">Código enviado para:</p>
+                            <p class="text-lg font-bold text-green-600">${userPhone}</p>
+                        </div>
+                        <div class="space-y-4">
+                            <button onclick="sendVerificationCode()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700">📱 ABRIR WHATSAPP E VER CÓDIGO</button>
+                            <p class="text-xs text-center text-gray-500">Copie o código do WhatsApp e cole abaixo:</p>
+                            <input id="codeInput" type="text" placeholder="000000" class="w-full px-4 py-4 border-2 border-gray-300 rounded-lg text-center text-3xl font-bold tracking-widest" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            <button onclick="verifyCode()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">✅ VERIFICAR CÓDIGO</button>
+                            <button onclick="resetLogin()" class="w-full bg-gray-200 text-gray-800 font-bold py-2 rounded-lg text-sm">← Voltar</button>
+                        </div>
+                        <p class="text-xs text-center text-gray-400 mt-3">⏱️ Código expira em 10 minutos</p>
                     </div>
-                    <p class="text-xs text-center text-gray-400 mt-4">⏱️ Código expira em 10 minutos</p>
-                </div>
-            </div>`;
+                </div>`;
+            }
         }
 
         function renderHome() {
-            const nome = currentUser?.nome || sessionStorage.getItem('tempName') || 'Usuário';
+            if (selectedCity === 'PAQUERA') return renderPaquera();
+            const emps = mockEmpregos[selectedCity] || [];
+            const ofts = mockOfertas[selectedCity] || [];
+            const fts = mockFestas[selectedCity] || [];
+            const svcs = mockServicos[selectedCity] || [];
+            const nots = mockNoticias[selectedCity] || [];
+
             return `
-            <div class="min-h-screen bg-gray-50">
-                <div class="bg-gradient-to-r from-green-700 to-green-600 text-white p-4 shadow-lg">
-                    <div class="flex items-center justify-between max-w-4xl mx-auto">
-                        <div class="flex items-center gap-2">
-                            <span class="text-3xl">🛡️</span>
-                            <h1 class="text-xl font-black">LIGA DO VALE</h1>
-                        </div>
-                        <p class="text-sm font-bold opacity-90">${nome}</p>
+            <div class="min-h-screen pb-40">
+                <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 sticky top-0 z-30 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2"><span class="text-3xl">🛡️</span><h1 class="text-xl font-black">LIGA DO VALE</h1></div>
+                        <div class="text-right text-xs"><p class="font-bold">Teste até</p><p class="text-yellow-200">01/04/2026</p></div>
                     </div>
+                    <p class="text-xs mt-1">👤 ${userName || currentUser?.nome || 'Usuário'}</p>
                 </div>
-                <div class="max-w-4xl mx-auto p-6">
-                    <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
-                        <div class="text-6xl mb-4">🎉</div>
-                        <h2 class="text-3xl font-black text-green-700 mb-4">SISTEMA FUNCIONANDO!</h2>
-                        <p class="text-gray-500 mb-6">Olá <strong>${nome}</strong>! Bem-vindo ao Liga do Vale!</p>
-                        <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6 text-left">
-                            <h3 class="font-black text-green-800 mb-4 text-lg">✅ Tudo conectado:</h3>
-                            <ul class="space-y-2 text-green-700 font-medium">
-                                <li>✅ Banco de dados (Supabase)</li>
-                                <li>✅ Autenticação WhatsApp</li>
-                                <li>✅ Termos de uso</li>
-                                <li>✅ Segurança ativa</li>
-                                <li>✅ Hospedagem Vercel</li>
-                            </ul>
-                        </div>
-                        <p class="mt-6 text-green-600 font-bold">🎁 Teste gratuito até 1º de abril de 2026!</p>
+
+                <div class="bg-gradient-to-r from-red-600 to-red-700 text-white p-4 text-center sticky top-16 z-20">
+                    <p class="text-sm font-bold mb-1">⚠️ Teste expira em 1º de abril!</p>
+                    <h2 class="text-xl font-black mb-2">🔴 ASSINE JÁ 🔴</h2>
+                    <p class="text-sm font-bold mb-2">R$ 1,99/semana ou R$ 4,99/mês</p>
+                    <button onclick="showPayment()" class="bg-white text-red-600 font-black px-6 py-2 rounded-lg w-full">💳 ASSINAR AGORA</button>
+                </div>
+
+                <div class="bg-white border-b p-3 sticky top-36 z-20">
+                    <label class="text-xs font-bold text-gray-700">Escolha uma cidade:</label>
+                    <select onchange="selectCity(this.value)" class="w-full mt-2 px-3 py-2 border-2 border-green-600 rounded-lg focus:outline-none">
+                        ${cities.map(c => `<option value="${c}" ${selectedCity === c ? 'selected' : ''}>${c}</option>`).join('')}
+                        <option value="PAQUERA">❤️ PAQUERA</option>
+                    </select>
+                </div>
+
+                <div class="p-4 space-y-3">
+                    ${renderAccordion('empregos', '📌', 'EMPREGOS', emps, renderEmprego)}
+                    ${renderAccordion('ofertas', '🏪', 'OFERTAS', ofts, renderOferta)}
+                    ${renderAccordion('festas', '🎉', 'FESTAS', fts, renderFesta)}
+                    ${renderAccordion('servicos', '🔧', 'SERVIÇOS', svcs, renderServico)}
+                    ${renderAccordionComprasVendas()}
+                    ${renderAccordion('noticias', '📰', 'NOTÍCIAS', nots, renderNoticia)}
+                </div>
+
+                <div class="bg-gray-800 text-white text-center p-3 text-xs fixed bottom-16 left-0 right-0 z-20">
+                    <p class="font-bold">🛡️ AVISO LEGAL</p>
+                    <p>A Liga do Vale NÃO SE RESPONSABILIZA por vagas fake, ofertas expiradas ou notícias falsas.</p>
+                    <button onclick="showTerms=true;render()" class="mt-1 bg-blue-600 text-white px-3 py-1 rounded text-xs">📋 LER TERMOS</button>
+                </div>
+
+                <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex justify-around z-30">
+                    <button onclick="selectCity('JUAZEIRO')" class="flex flex-col items-center text-xs gap-1 text-gray-600 hover:text-green-600"><span class="text-2xl">🏠</span>Home</button>
+                    <button onclick="selectCity('PAQUERA')" class="flex flex-col items-center text-xs gap-1 text-gray-600 hover:text-green-600"><span class="text-2xl">❤️</span>Paquera</button>
+                    <button onclick="logout()" class="flex flex-col items-center text-xs gap-1 text-gray-600 hover:text-green-600"><span class="text-2xl">⚙️</span>Sair</button>
+                </div>
+            </div>`;
+        }
+
+        function renderAccordion(id, icon, title, items, renderItem) {
+            const isOpen = openAccordion === id;
+            return `
+            <div class="bg-white border-2 border-gray-200 rounded-lg">
+                <button onclick="toggleAccordion('${id}')" class="w-full p-4 flex justify-between items-center hover:bg-gray-50">
+                    <h2 class="font-bold text-gray-800">${icon} ${title} (${items.length})</h2>
+                    <span class="text-2xl">${isOpen ? '▼' : '▶'}</span>
+                </button>
+                <div class="accordion-content ${isOpen ? 'open' : ''}">
+                    <div class="p-4 space-y-3 border-t-2">
+                        ${items.map(renderItem).join('')}
                     </div>
                 </div>
             </div>`;
         }
 
-        function render() {
-            const app = document.getElementById('app');
-            if (!app) return;
-            if (currentPage === 'login') app.innerHTML = renderLogin();
-            else if (currentPage === 'verify') app.innerHTML = renderVerify();
-            else if (currentPage === 'home') app.innerHTML = renderHome();
+        function renderEmprego(item) {
+            return `
+            <div class="bg-gray-50 p-3 rounded-lg border-l-4 border-green-600">
+                <h3 class="font-bold text-gray-800 text-sm">${item.titulo}</h3>
+                <p class="text-green-600 font-bold text-sm">${item.salario}</p>
+                <p class="text-xs text-gray-500 mt-1 bg-yellow-50 p-1 rounded">⚠️ Verifique sempre com o empregador.</p>
+                <div class="mt-2 flex gap-2">
+                    <button onclick="openWhatsAppLink('${item.telefone}','Olá, vi sua vaga no Liga do Vale!')" class="flex-1 text-xs bg-green-600 text-white px-2 py-1 rounded">CHAMAR</button>
+                    <button class="text-xs bg-red-500 text-white px-2 py-1 rounded">⚠️</button>
+                </div>
+            </div>`;
         }
 
-        window.addEventListener('load', () => {
-            initSupabase();
+        function renderOferta(item) {
+            return `
+            <div class="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-600">
+                <h3 class="font-bold text-gray-800 text-sm">${item.produto}</h3>
+                <p class="text-sm line-through text-gray-400">De: R$ ${item.precoNormal.toFixed(2)}</p>
+                <p class="font-bold text-green-600 text-sm">Por: R$ ${item.precoPromo.toFixed(2)} ↓${item.desconto}%</p>
+                <p class="text-xs text-gray-600">📍 ${item.mercado}</p>
+                <p class="text-xs text-gray-500 mt-1 bg-yellow-50 p-1 rounded">⚠️ Preços sujeitos a mudanças.</p>
+                <button class="mt-2 w-full text-xs bg-red-500 text-white px-2 py-1 rounded">⚠️ DENUNCIAR</button>
+            </div>`;
+        }
+
+        function renderFesta(item) {
+            return `
+            <div class="bg-purple-50 p-3 rounded-lg border-l-4 border-purple-600">
+                <h3 class="font-bold text-gray-800 text-sm">${item.nome}</h3>
+                <p class="text-xs">📅 ${item.data} - ${item.hora} | 📍 ${item.local}</p>
+                <p class="font-bold text-xs">💰 ${item.entrada}</p>
+                <p class="text-xs text-gray-500 mt-1 bg-yellow-50 p-1 rounded">⚠️ Confirme com o organizador.</p>
+                <div class="mt-2 flex gap-2">
+                    <button class="flex-1 text-xs bg-orange-600 text-white px-2 py-1 rounded">CHAMAR</button>
+                    <button class="text-xs bg-red-500 text-white px-2 py-1 rounded">⚠️</button>
+                </div>
+            </div>`;
+        }
+
+        function renderServico(item) {
+            return `
+            <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-600">
+                <h3 class="font-bold text-gray-800 text-sm">${item.nome}</h3>
+                <p class="text-blue-600 font-bold text-sm">${item.profissao}</p>
+                <p class="text-xs text-gray-600">⭐ ${item.experiencia} anos de experiência</p>
+                <p class="text-xs text-gray-500 mt-1 bg-yellow-50 p-1 rounded">⚠️ Verifique referências antes de contratar.</p>
+                <div class="mt-2 flex gap-2">
+                    <button onclick="openWhatsAppLink('${item.telefone}','Olá, vi seu serviço no Liga do Vale!')" class="flex-1 text-xs bg-blue-600 text-white px-2 py-1 rounded">CHAMAR</button>
+                    <button class="text-xs bg-red-500 text-white px-2 py-1 rounded">⚠️</button>
+                </div>
+            </div>`;
+        }
+
+        function renderNoticia(item) {
+            return `
+            <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-600">
+                <h3 class="font-bold text-gray-800 text-sm">${item.titulo}</h3>
+                <p class="text-gray-700 text-xs mt-1">${item.descricao}</p>
+                <p class="text-xs text-gray-500 mt-1">📌 ${item.fonte} | 🕐 ${item.horario}</p>
+                <p class="text-xs text-gray-500 mt-1 bg-yellow-50 p-1 rounded">⚠️ Confirme com fontes oficiais.</p>
+                <button class="mt-2 w-full bg-red-500 text-white text-xs px-2 py-1 rounded">⚠️ DENUNCIAR</button>
+            </div>`;
+        }
+
+        function renderAccordionComprasVendas() {
+            const id = 'cv';
+            const isOpen = openAccordion === id;
+            return `
+            <div class="bg-white border-2 border-gray-200 rounded-lg">
+                <button onclick="toggleAccordion('${id}')" class="w-full p-4 flex justify-between items-center hover:bg-gray-50">
+                    <h2 class="font-bold text-gray-800">🛒 COMPRAS E VENDAS</h2>
+                    <span class="text-2xl">${isOpen ? '▼' : '▶'}</span>
+                </button>
+                <div class="accordion-content ${isOpen ? 'open' : ''}">
+                    <div class="p-4 space-y-3 border-t-2">
+                        <div class="bg-purple-50 p-3 rounded-lg border-l-4 border-purple-600">
+                            <h3 class="font-bold text-gray-800 text-sm">📢 VENDER AQUI</h3>
+                            <div class="mt-3 space-y-2">
+                                <input id="produtoTitulo" type="text" placeholder="O que está vendendo?" class="w-full text-xs px-2 py-2 border-2 border-gray-300 rounded" maxlength="50">
+                                <textarea id="produtoDesc" placeholder="Descrição do produto..." class="w-full text-xs px-2 py-2 border-2 border-gray-300 rounded h-16" maxlength="200"></textarea>
+                                <input id="produtoPreco" type="text" placeholder="Preço (ex: R$ 500)" class="w-full text-xs px-2 py-2 border-2 border-gray-300 rounded" maxlength="20">
+                                <input id="produtoTel" type="tel" placeholder="Seu telefone" class="w-full text-xs px-2 py-2 border-2 border-gray-300 rounded" maxlength="15">
+                                <button onclick="enviarCompraVenda('${selectedCity}')" class="w-full bg-purple-600 text-white text-xs px-2 py-2 rounded font-bold">📤 ENVIAR PARA ANÁLISE</button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2 bg-yellow-50 p-1 rounded">⚠️ Seu anúncio será analisado antes de publicar. Contato: (74) 9 9957-8665</p>
+                        </div>
+                        <p class="text-xs text-gray-500 text-center py-2">Nenhum anúncio ainda. Seja o primeiro!</p>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderPaquera() {
+            const profile = paqueraProfiles[paquerapIndex];
+            if (!profile) {
+                return `
+                <div class="min-h-screen flex items-center justify-center pb-24">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">🎉</div>
+                        <h2 class="text-2xl font-bold text-gray-800">Sem mais perfis!</h2>
+                        <button onclick="selectCity('JUAZEIRO')" class="mt-4 bg-green-600 text-white px-4 py-2 text-sm rounded-lg font-bold">Voltar</button>
+                    </div>
+                </div>`;
+            }
+            return `
+            <div class="min-h-screen pb-24">
+                <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 sticky top-0 z-20">
+                    <h1 class="text-2xl font-black">❤️ PAQUERA</h1>
+                </div>
+                <div class="p-4 mt-4">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden slide-in">
+                        <div class="bg-gradient-to-r from-pink-400 to-rose-400 h-40 flex items-center justify-center text-8xl">${profile.avatar}</div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold">${profile.nome}, ${profile.idade}</h3>
+                            <p class="text-gray-600 text-sm">📍 ${profile.cidade}</p>
+                            <p class="text-gray-700 text-sm mt-2">${profile.bio}</p>
+                            <div class="flex gap-3 mt-4">
+                                <button onclick="skipProfile()" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 rounded-lg text-2xl">⏭️</button>
+                                <button onclick="likeProfile()" class="flex-1 bg-rose-500 text-white font-bold py-3 rounded-lg text-2xl">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+                    ${userMatches.length > 0 ? `
+                    <div class="mt-6 bg-green-50 border-2 border-green-200 rounded-2xl p-4">
+                        <h3 class="font-bold text-green-700 mb-3">🎉 MATCHES: ${userMatches.length}</h3>
+                        ${userMatches.map(m => `<div class="bg-white p-2 rounded-lg flex gap-2 mb-2 text-sm"><span class="text-2xl">${m.avatar}</span><p class="font-bold self-center">${m.nome}, ${m.idade}</p></div>`).join('')}
+                    </div>` : ''}
+                </div>
+                <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex justify-around z-30">
+                    <button onclick="selectCity('JUAZEIRO')" class="flex flex-col items-center text-xs gap-1 text-gray-600"><span class="text-2xl">🏠</span>Home</button>
+                    <button class="flex flex-col items-center text-xs gap-1 text-green-600 font-bold"><span class="text-2xl">❤️</span>Paquera</button>
+                    <button onclick="logout()" class="flex flex-col items-center text-xs gap-1 text-gray-600"><span class="text-2xl">⚙️</span>Sair</button>
+                </div>
+            </div>`;
+        }
+
+        function renderTermsModal() {
+            return `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                <div class="bg-white rounded-2xl p-6 max-w-2xl w-full slide-in my-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">⚖️ TERMOS DE USO</h2>
+                        <button onclick="showTerms=false;render()" class="text-2xl">✕</button>
+                    </div>
+                    <div class="max-h-96 overflow-y-auto text-xs text-gray-700 space-y-3">
+                        <h3 class="font-bold">1. SOBRE O SERVIÇO</h3>
+                        <p>Liga do Vale é um agregador de informações hiperlocal para Juazeiro e Petrolina.</p>
+                        <h3 class="font-bold">2. NÃO NOS RESPONSABILIZAMOS POR:</h3>
+                        <p>Vagas falsas, ofertas expiradas, festas canceladas, notícias falsas ou qualidade de serviços.</p>
+                        <h3 class="font-bold">3. SEUS DADOS</h3>
+                        <p>Coletamos nome e WhatsApp. Não vendemos seus dados a terceiros.</p>
+                        <h3 class="font-bold">4. PAGAMENTOS</h3>
+                        <p>Teste grátis até 1º de abril de 2026. Após: R$ 1,99/semana ou R$ 4,99/mês.</p>
+                        <h3 class="font-bold">5. DENÚNCIAS</h3>
+                        <p>Clique em ⚠️ DENUNCIAR no item. Contato: (74) 9 9957-8665</p>
+                    </div>
+                    <button onclick="showTerms=false;render()" class="w-full mt-4 bg-green-600 text-white font-bold py-2 rounded-lg text-sm">✅ ENTENDI</button>
+                </div>
+            </div>`;
+        }
+
+        // ==================== FUNÇÕES ====================
+        function selectCity(city) { selectedCity = city; openAccordion = null; render(); }
+        function toggleAccordion(section) { openAccordion = openAccordion === section ? null : section; render(); }
+        function skipProfile() { paquerapIndex++; render(); }
+        function likeProfile() { const p = paqueraProfiles[paquerapIndex]; userMatches.push(p); paquerapIndex++; alert(`${p.nome} te curtiu! 👀`); render(); }
+        function showPayment() { showPaymentModal = true; paymentAmount = 0; render(); }
+        function selectPaymentPlan(type, amount) { paymentType = type; paymentAmount = amount; render(); }
+        function confirmPayment() { isSubscribed = true; showPaymentModal = false; alert('✅ Pagamento confirmado!'); render(); }
+
+        function logout() {
+            currentPage = 'login'; isPhoneVerified = false; userName = ''; currentUser = null;
+            tempUserId = null; isSubscribed = false; paquerapIndex = 0; userMatches = [];
             render();
-        });
+        }
+
+        function enviarCompraVenda(cidade) {
+            const titulo = document.getElementById('produtoTitulo')?.value;
+            const desc = document.getElementById('produtoDesc')?.value;
+            const preco = document.getElementById('produtoPreco')?.value;
+            const tel = document.getElementById('produtoTel')?.value;
+            if (!titulo || !desc || !preco || !tel) { alert('❌ Preencha todos os campos!'); return; }
+            const msg = `🛒 NOVO ANÚNCIO\n\nCidade: ${cidade}\nProduto: ${titulo}\nDescrição: ${desc}\nPreço: ${preco}\nTelefone: ${tel}`;
+            window.open(`https://wa.me/5574999578665?text=${encodeURIComponent(msg)}`, '_blank');
+            alert('✅ Enviado para análise! Entraremos em contato em até 24h.');
+        }
+
+        function render() {
+            let html = '';
+            if (showTerms) {
+                html = renderTermsModal() + (currentPage === 'login' ? renderLogin() : renderHome());
+            } else if (currentPage === 'login') {
+                html = renderLogin();
+            } else if (showPaymentModal && paymentAmount === 0) {
+                html = `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white rounded-2xl p-6 max-w-sm w-full slide-in">
+                        <h2 class="text-xl font-bold mb-4 text-center">💳 Escolha seu plano</h2>
+                        <div class="space-y-2 mb-4">
+                            <button onclick="selectPaymentPlan('semana',1.99)" class="w-full border-2 border-green-600 rounded-lg p-3 hover:bg-green-50"><p class="font-bold text-green-600">R$ 1,99/semana</p></button>
+                            <button onclick="selectPaymentPlan('mes',4.99)" class="w-full border-2 border-green-600 rounded-lg p-3 hover:bg-green-50"><p class="font-bold text-green-600">R$ 4,99/mês</p></button>
+                        </div>
+                        <button onclick="showPaymentModal=false;render()" class="w-full bg-gray-200 font-bold py-2 rounded-lg text-sm">Cancelar</button>
+                    </div>
+                </div>` + renderHome();
+            } else if (showPaymentModal && paymentAmount > 0) {
+                html = `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white rounded-2xl p-6 max-w-sm w-full slide-in">
+                        <h2 class="text-xl font-bold mb-4 text-center">📱 PIX - R$ ${paymentAmount.toFixed(2)}</h2>
+                        <div class="bg-gray-100 rounded-lg p-6 text-center mb-4 h-32 flex items-center justify-center"><span class="text-xl">📱 QR CODE PIX</span></div>
+                        <button onclick="confirmPayment()" class="w-full bg-green-600 text-white font-bold py-2 rounded-lg mb-2 text-sm">✅ JÁ PAGUEI</button>
+                        <button onclick="showPaymentModal=false;paymentAmount=0;render()" class="w-full bg-gray-200 font-bold py-2 rounded-lg text-sm">Cancelar</button>
+                    </div>
+                </div>` + renderHome();
+            } else {
+                html = renderHome();
+            }
+            document.getElementById('app').innerHTML = html;
+        }
+
+        window.addEventListener('load', () => { initSupabase(); render(); });
     </script>
 </body>
 </html>
