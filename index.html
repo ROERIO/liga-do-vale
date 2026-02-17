@@ -483,22 +483,91 @@
             <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
                 <div class="bg-white rounded-2xl p-6 max-w-2xl w-full slide-in my-8">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">⚖️ TERMOS DE USO</h2>
-                        <button onclick="showTerms=false;render()" class="text-2xl">✕</button>
+                        <h2 class="text-xl font-bold text-green-700">⚖️ TERMOS DE USO E POLÍTICA DE PRIVACIDADE</h2>
+                        <button onclick="showTerms=false;render()" class="text-2xl text-gray-500 hover:text-gray-800">✕</button>
                     </div>
-                    <div class="max-h-96 overflow-y-auto text-xs text-gray-700 space-y-3">
-                        <h3 class="font-bold">1. SOBRE O SERVIÇO</h3>
-                        <p>Liga do Vale é um agregador de informações hiperlocal para Juazeiro e Petrolina.</p>
-                        <h3 class="font-bold">2. NÃO NOS RESPONSABILIZAMOS POR:</h3>
-                        <p>Vagas falsas, ofertas expiradas, festas canceladas, notícias falsas ou qualidade de serviços.</p>
-                        <h3 class="font-bold">3. SEUS DADOS</h3>
-                        <p>Coletamos nome e WhatsApp. Não vendemos seus dados a terceiros.</p>
-                        <h3 class="font-bold">4. PAGAMENTOS</h3>
-                        <p>Teste grátis até 1º de abril de 2026. Após: R$ 1,99/semana ou R$ 4,99/mês.</p>
-                        <h3 class="font-bold">5. DENÚNCIAS</h3>
-                        <p>Clique em ⚠️ DENUNCIAR no item. Contato: (74) 9 9957-8665</p>
+                    <div class="max-h-96 overflow-y-auto text-xs text-gray-700 space-y-4 pr-1">
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                            <p><strong>Responsável:</strong> LIGA DO VALE</p>
+                            <p><strong>CNPJ:</strong> [INSERIR APÓS ABERTURA DO MEI]</p>
+                            <p><strong>Contato:</strong> (74) 9 9957-8665</p>
+                            <p><strong>Vigência:</strong> A partir de 17 de fevereiro de 2026</p>
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                            <strong>⚠️ IMPORTANTE:</strong> Ao utilizar a LIGA DO VALE, você declara ter lido, compreendido e concordado com todos os termos abaixo. Se não concordar, não utilize o serviço.
+                        </div>
+
+                        <h3 class="font-bold text-gray-900 text-sm">1. SOBRE O SERVIÇO</h3>
+                        <p>A LIGA DO VALE é uma plataforma digital de conexão hiperlocal que agrega e facilita o acesso a informações sobre empregos, ofertas, eventos, serviços e contato entre pessoas nas cidades de Juazeiro-BA e Petrolina-PE. <strong>Não somos responsáveis pelas negociações, pela qualidade dos serviços prestados por terceiros ou pela veracidade total de anúncios postados por usuários.</strong></p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">2. RESTRIÇÃO DE IDADE</h3>
+                        <p>O uso da LIGA DO VALE é <strong>restrito a maiores de 18 anos.</strong> Ao se cadastrar, você declara ter 18 anos ou mais. O cadastro de menores de idade é expressamente proibido e será cancelado imediatamente se identificado.</p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">3. SEUS DADOS E PRIVACIDADE (LGPD — Lei 13.709/2018)</h3>
+                        <p><strong>Dados coletados:</strong> Nome completo e número de WhatsApp.</p>
+                        <p class="mt-1"><strong>Finalidade:</strong> Autenticação de usuário, envio de código de verificação e contato entre usuários da plataforma.</p>
+                        <p class="mt-1"><strong>Visibilidade:</strong> Ao postar anúncio de venda, serviço ou perfil de paquera, seu nome e telefone ficarão visíveis para outros usuários cadastrados.</p>
+                        <p class="mt-1"><strong>Compartilhamento:</strong> Seus dados NÃO são vendidos ou compartilhados com terceiros para fins comerciais.</p>
+                        <p class="mt-1"><strong>Seus direitos (LGPD):</strong> Você pode a qualquer momento solicitar: acesso aos seus dados, correção, exclusão ou portabilidade. Para exercer esses direitos, entre em contato: (74) 9 9957-8665.</p>
+                        <p class="mt-1"><strong>Retenção:</strong> Seus dados são mantidos enquanto sua conta estiver ativa. Após solicitação de exclusão, os dados são removidos em até 30 dias.</p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">4. REGRAS DE CONDUTA</h3>
+                        <p>É terminantemente proibido postar ou enviar:</p>
+                        <ul class="list-disc pl-4 mt-1 space-y-1">
+                            <li>Conteúdo ilegal, ofensivo, violento ou pornográfico</li>
+                            <li>Anúncios falsos, golpes ou produtos ilícitos</li>
+                            <li>Assédio, ameaças ou desrespeito a outros usuários</li>
+                            <li>Spam ou conteúdo repetitivo com fins comerciais não autorizados</li>
+                            <li>Dados pessoais de terceiros sem consentimento</li>
+                        </ul>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-2 rounded mt-2">
+                            <strong>⚠️ PUNIÇÃO:</strong> O descumprimento resultará no banimento imediato e permanente do número de telefone, sem direito a reembolso de qualquer valor pago.
+                        </div>
+
+                        <h3 class="font-bold text-gray-900 text-sm">5. ISENÇÃO DE RESPONSABILIDADE</h3>
+                        <p>A LIGA DO VALE não se responsabiliza por:</p>
+                        <ul class="list-disc pl-4 mt-1 space-y-1">
+                            <li>Vagas de emprego falsas ou expiradas</li>
+                            <li>Ofertas de produtos com preços desatualizados</li>
+                            <li>Festas ou eventos cancelados</li>
+                            <li>Notícias falsas ou desatualizadas</li>
+                            <li>Qualidade dos serviços prestados por profissionais listados</li>
+                            <li>Negociações, pagamentos ou acordos entre usuários</li>
+                        </ul>
+                        <p class="mt-1 bg-yellow-50 p-2 rounded"><strong>💡 DICA:</strong> Sempre verifique as informações com a fonte oficial antes de tomar qualquer decisão. Nunca pague adiantado por algo que não viu pessoalmente.</p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">6. PAGAMENTOS E ASSINATURA</h3>
+                        <ul class="list-disc pl-4 mt-1 space-y-1">
+                            <li>Período de teste gratuito até <strong>1º de abril de 2026</strong></li>
+                            <li>Após esse período, o acesso requer assinatura ativa:</li>
+                            <li>Plano Semanal: <strong>R$ 1,99/semana</strong></li>
+                            <li>Plano Mensal: <strong>R$ 4,99/mês</strong></li>
+                        </ul>
+
+                        <h3 class="font-bold text-gray-900 text-sm">7. CANCELAMENTO E REEMBOLSO</h3>
+                        <p>O usuário pode cancelar sua assinatura a qualquer momento entrando em contato via WhatsApp: (74) 9 9957-8665. <strong>Não há reembolso de períodos já pagos.</strong> O acesso permanece ativo até o fim do período contratado.</p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">8. TRANSAÇÕES ENTRE USUÁRIOS</h3>
+                        <p>A LIGA DO VALE <strong>não processa, intermedia ou garante</strong> pagamentos de produtos ou serviços negociados entre usuários. Toda negociação é de responsabilidade exclusiva das partes envolvidas.</p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">9. DENÚNCIAS</h3>
+                        <p>Clique em <strong>⚠️ DENUNCIAR</strong> em qualquer item suspeito. Analisamos em até 24 horas. Para denúncias urgentes: (74) 9 9957-8665.</p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">10. ALTERAÇÕES DOS TERMOS</h3>
+                        <p>A LIGA DO VALE se reserva o direito de alterar estes termos a qualquer momento. Alterações relevantes serão comunicadas via WhatsApp cadastrado. O uso continuado após a comunicação implica na aceitação dos novos termos.</p>
+
+                        <h3 class="font-bold text-gray-900 text-sm">11. FORO E LEI APLICÁVEL</h3>
+                        <p>Estes termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da comarca de <strong>Juazeiro — Estado da Bahia</strong> para dirimir quaisquer controvérsias decorrentes deste instrumento, com renúncia expressa a qualquer outro.</p>
+
+                        <div class="bg-gray-100 p-3 rounded text-center mt-2">
+                            <p><strong>LIGA DO VALE</strong> — Sua cidade em um só lugar</p>
+                            <p>Última atualização: 17 de fevereiro de 2026</p>
+                            <p>Contato: (74) 9 9957-8665</p>
+                        </div>
                     </div>
-                    <button onclick="showTerms=false;render()" class="w-full mt-4 bg-green-600 text-white font-bold py-2 rounded-lg text-sm">✅ ENTENDI</button>
+                    <button onclick="showTerms=false;render()" class="w-full mt-4 bg-green-600 text-white font-bold py-3 rounded-lg text-sm hover:bg-green-700">✅ LI E ACEITO OS TERMOS</button>
                 </div>
             </div>`;
         }
