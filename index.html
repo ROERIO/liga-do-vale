@@ -70,8 +70,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
     <script>
-        // AGUARDA O SUPABASE CARREGAR
-        const SUPABASE_URL = 'https://vgcbyctitojxzesmkvg.supabase.co';
+        // URL CORRIGIDA - vgcbyctitiojxzesmkvg (com o "i" que estava faltando)
+        const SUPABASE_URL = 'https://vgcbyctitiojxzesmkvg.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnY2J5Y3RpdGlvanh6ZXNta3ZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNjQxMTgsImV4cCI6MjA4Njg0MDExOH0.ApLKumhJHL6KTjpvzzXMx2FSG2wGZuyA67yO-jTH-yk';
 
         let supabaseClient = null;
@@ -131,7 +131,6 @@
             try {
                 const cleanPhone = phone.replace(/\D/g, '');
 
-                // VERIFICAR SE USUÁRIO JÁ EXISTE
                 const { data: existingUser, error: searchError } = await supabaseClient
                     .from('users')
                     .select('id, nome, cidade')
@@ -143,7 +142,6 @@
                 if (existingUser) {
                     userId = existingUser.id;
                 } else {
-                    // CRIAR NOVO USUÁRIO
                     const { data: newUser, error: insertError } = await supabaseClient
                         .from('users')
                         .insert([{
@@ -165,7 +163,6 @@
                     userId = newUser.id;
                 }
 
-                // GERAR CÓDIGO
                 const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
                 const { error: codeError } = await supabaseClient
@@ -182,7 +179,6 @@
                     throw new Error('Erro ao gerar código: ' + codeError.message);
                 }
 
-                // ENVIAR WHATSAPP
                 const message = `🛡️ LIGA DO VALE\n\nOlá ${name}! Seu código de acesso:\n\n🔑 ${verificationCode}\n\nDigite no site para liberar.\n⚠️ Expira em 10 minutos.\n\nNão compartilhe!`;
                 window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
 
@@ -235,7 +231,6 @@
                 sessionStorage.removeItem('tempPhone');
                 sessionStorage.removeItem('tempName');
 
-                // BOAS VINDAS WHATSAPP
                 const welcomeMsg = `🎉 BEM-VINDO(A) À LIGA DO VALE! 🌵\n\nAgora você tem tudo na palma da mão:\n\n💼 Empregos novos todo dia\n🛒 Ofertas dos supermercados\n🔧 Encanadores e eletricistas\n🥳 Agenda de festas\n🏪 Compra e venda com foto\n💘 Paquera local\n\n🔗 Acesse: liga-do-vale.vercel.app\n\n💡 Adicione à tela inicial do celular!\n🎁 Teste grátis até 1º de abril de 2026!`;
                 setTimeout(() => window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(welcomeMsg)}`, '_blank'), 1500);
 
@@ -351,7 +346,6 @@
             else if (currentPage === 'home') app.innerHTML = renderHome();
         }
 
-        // INICIA QUANDO PÁGINA CARREGA
         window.addEventListener('load', () => {
             initSupabase();
             render();
